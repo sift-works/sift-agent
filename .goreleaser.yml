@@ -1,0 +1,53 @@
+version: 2
+
+builds:
+  - main: ./cmd/sift-agent
+    binary: sift-agent
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X github.com/sift-works/agent/internal/config.Version={{.Version}}
+
+archives:
+  - format: tar.gz
+    name_template: "sift-agent_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+dockers:
+  - image_templates:
+      - "siftworks/agent:{{ .Version }}-amd64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+    dockerfile: Dockerfile.goreleaser
+    goarch: amd64
+  - image_templates:
+      - "siftworks/agent:{{ .Version }}-arm64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64"
+    dockerfile: Dockerfile.goreleaser
+    goarch: arm64
+
+docker_manifests:
+  - name_template: "siftworks/agent:{{ .Version }}"
+    image_templates:
+      - "siftworks/agent:{{ .Version }}-amd64"
+      - "siftworks/agent:{{ .Version }}-arm64"
+  - name_template: "siftworks/agent:latest"
+    image_templates:
+      - "siftworks/agent:{{ .Version }}-amd64"
+      - "siftworks/agent:{{ .Version }}-arm64"
+
+release:
+  github:
+    owner: sift-works
+    name: agent

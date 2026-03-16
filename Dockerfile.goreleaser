@@ -1,0 +1,5 @@
+FROM alpine:3.20
+RUN apk add --no-cache ca-certificates tzdata
+COPY sift-agent /usr/local/bin/sift-agent
+USER nobody:nobody
+ENTRYPOINT ["sift-agent"]
