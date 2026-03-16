@@ -50,4 +50,4 @@ docker_manifests:
 release:
   github:
     owner: sift-works
-    name: agent
+    name: sift-agent
